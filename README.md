@@ -30,39 +30,5 @@ touch src/nlp_project/main.py
 mkdir tests
 ```
 
-# nlp_project.toml
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
 
-# setup
-```
-[metadata]
-name = example-pkg-YOUR-USERNAME-HERE
-version = 0.0.1
-author = Example Author
-author_email = author@example.com
-description = A small example package
-long_description = file: README.md
-long_description_content_type = text/markdown
-url = https://github.com/pypa/sampleproject
-project_urls =
-    Bug Tracker = https://github.com/pypa/sampleproject/issues
-classifiers =
-    Programming Language :: Python :: 3
-    License :: OSI Approved :: MIT License
-    Operating System :: OS Independent
-
-[options]
-package_dir =
-    = src
-packages = find:
-python_requires = >=3.9
-
-[options.packages.find]
-where = src
-```
 
