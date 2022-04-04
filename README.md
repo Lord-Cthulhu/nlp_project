@@ -4,6 +4,10 @@ Windows
 ```
 py -m pip install --upgrade pip 
 ```
+Linux/MacOS
+```
+python3 -m pip install --upgrade pip
+```
 
 # Project Structure
 ```
