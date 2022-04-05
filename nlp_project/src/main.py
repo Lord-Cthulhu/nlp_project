@@ -1,3 +1,3 @@
 #Import Models 
-import Tokenizer
+import Token
 import Classifier
