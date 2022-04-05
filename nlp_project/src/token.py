@@ -27,8 +27,8 @@ test = ['hello','world','world']
 df = pd.DataFrame(test)
 #texts = [[word.lower() for word in text.split()] for text in df]
 print(df)
-text = ["Roasted ants are a popular snack in Columbia"]
-text2 = "Roasted ants are a popular snack in Columbia"
+text = ["Do pip list to make sure you have actually installed those versions"]
+text2 = "Do pip list to make sure you have actually installed those versions"
 
 def tfidf_vectorizer(df):
     try: 
