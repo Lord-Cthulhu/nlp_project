@@ -118,37 +118,110 @@ def lemmatization(text):
 print('lemmatize')
 print(lemmatization(text))
 
-def stemming(text): 
-    return 1   
+def stemming(text,a):
+    try:
+        if a == 'p':
+            #https://www.nltk.org/howto/stem.html
+            porter = PorterStemmer()
+            #C.J. van Rijsbergen, S.E. Robertson and M.F. Porter, 1980. New models in probabilistic information retrieval. London: British Library. (British Library Research and Development Report, no. 5587).
+            #Alternative fonctionnelle 
+            #snowball = SnowballStemmer('porter', ignore_stopwords=False)
+            token = word_tokenize(text)
+            p_stem=[]
+            for i in token:
+                p = porter.stem(i)
+                p_stem.append(' '.join(p))
+            return p_stem
+            
+            
+        if a == 'l':    
+            #L'algorithme le plus agressif 
+            lancaster = LancasterStemmer()
+            #snowball = SnowballStemmer('lancaster', ignore_stopwords=False)
+            token = word_tokenize(text)
+            l_stem=[]
+            for i in token:
+                l = lancaster.stem(i)
+                l_stem.append(' '.join(l))
+            return l_stem
+        
+        
+        if a == 's':
+            #TBD
+            snowball = SnowballStemmer('english', ignore_stopwords=True)
+            token = word_tokenize(text)
+            s_stem=[]
+            for i in token:
+                s = snowball.stem(i)
+                s_stem.append(' '.join(s))
+            return s_stem 
+        
+        else:
+            porter = PorterStemmer()
+            lancaster = LancasterStemmer()
+            snowball = SnowballStemmer('english', ignore_stopwords=True)
+            
+            token = word_tokenize(text)
+            
+            p_stem=[]
+            l_stem=[]
+            s_stem=[]
+            for i in token:
+                p = porter.stem(i)
+                l = lancaster.stem(i)
+                s = snowball.stem(i)
+                p_stem.append(' '.join(p))
+                l_stem.append(' '.join(l))
+                s_stem.append(' '.join(s))
+            return p_stem, l_stem, s_stem 
+    except Exception as e:
+        print('stemming fail')
+        print(f'error: {e}'.format(e))
+        pass 
+        
 
 print('stemming')
-print(stemming(text))
+print(stemming(lemmm[0],"p")) 
 
-def bert_vectorizer(text):
+def bert_vectorizer(text, fast):
     try: 
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        
-        #Marking
-        m_text = "[CLS] " + text + " [SEP]"
-        
-        #Tokenize Text
-        text_token = tokenizer.tokenize(m_text)
-        
-        #Index token
-        index_token = tokenizer.convert_tokens_to_ids(text_token)
-        
-        # Display the words with their indeces.
-        #for tup in zip(tokenized_text, indexed_tokens):
-        #    print('{:<12} {:>6,}'.format(tup[0], tup[1]))
-        return m_text, text_token, index_token
-        
-        
+        if fast == 0:
+            #https://huggingface.co/docs/transformers/model_doc/bert
+            #https://huggingface.co/docs/transformers/v4.17.0/en/main_classes/tokenizer#transformers.PreTrainedTokenizer
+            tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case = True)
+            
+            #Marking [CLS],[SEP],[UNK],[PAD]
+            m_text = "[CLS] " + text + " [SEP]"
+            
+            #Tokenize Text
+            token = tokenizer.tokenize(m_text)
+            
+            #Index token
+            index_token = tokenizer.convert_tokens_to_ids(token)
+            return m_text, token, index_token
+        if fast == 1:
+            #https://huggingface.co/docs/transformers/model_doc/bert
+            fast_tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased', do_lower_case = True)
+            
+            #Marking [CLS],[SEP],[UNK],[PAD]
+            m_text = "[CLS] " + text + " [SEP]"
+            
+            #Tokenize Text
+            f_token = fast_tokenizer.tokenize(m_text)
+            
+            #Index token
+            f_index_token = fast_tokenizer.convert_tokens_to_ids(f_token)
+            
+            return m_text, f_token,f_index_token
+            # Display the words with their indeces.
+            #for tup in zip(tokenized_text, indexed_tokens):
+            #    print('{:<12} {:>6,}'.format(tup[0], tup[1]))
     except Exception as e:
         print('bert_vectorizer fail')
         print(f'error: {e}'.format(e))
         pass       
     
-print(bert_vectorizer(text2))    
+print(bert_vectorizer(lemmm[0],1))    
     
 def glove_vectorizer():
     try: 
