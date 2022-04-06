@@ -460,7 +460,7 @@ def silhouette_method(graph,scaled_features,**silhouette_kwargs):
 e) Normaliser les attributs
 '''
 
-def kmeans_minmaxscaler(f_df, headers):
+def kmeans_minmaxscaler(f_df, headers): #Résultat entre 0 et 1 ou -1 et 1 en fonction des données 
     '''
     [Scaler avec la méthode MinMax]
     [f_df = Données propre]
@@ -479,7 +479,7 @@ def kmeans_minmaxscaler(f_df, headers):
         print(e)
         pass
 
-def kmeans_stdscaler(f_df, headers):
+def kmeans_stdscaler(f_df, headers): #loi normale (moyenne = 0, basé sur l'écart type)
     '''
     [Scaler avec la méthode standard]
     [f_df = Données propre]
