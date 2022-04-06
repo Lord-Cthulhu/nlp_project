@@ -64,11 +64,11 @@ print(vectors, feature_names, l_dense, all_keywords)
   
 def elmo_vectorizer(df):
     try: 
-        #######TensorFlow Deprecated but functionnal#############
-        #Forcer la V1 de tensorflow
+        #######TensorFlow########
+        # Forcer la V1 de tensorflow
         tf.compat.v1.disable_eager_execution()
 
-        #Libraire tensorflow de référence
+        # Libraire tensorflow de référence
         elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
         
         embeddings = elmo(df, signature="default", as_dict=True)["elmo"]
@@ -82,8 +82,10 @@ def elmo_vectorizer(df):
         print(embeddings.dtype)
         
         # Extract features 
-        embeddings = elmo(df, signature="default", as_dict=True)["elmo"]
+        embeddings = elmo(df, signature="default", as_dict=True)["elmo"] #With the tokens signature, the module takes tokenized sentences as input. https://tfhub.dev/google/elmo/3
         print(embeddings)
+        
+        # Executer la session avec TFV1
         with tf.compat.v1.Session() as sess:
             sess.run(tf.compat.v1.global_variables_initializer())
             sess.run(tf.compat.v1.tables_initializer())
