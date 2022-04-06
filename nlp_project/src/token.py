@@ -14,6 +14,8 @@ nltk.download('stopwords') # Remove Stopwords
 nltk.download('averaged_perceptron_tagger') #Analyse Morphologique (PoS)
 nltk.download('maxent_ne_chunker') #Analyse syntaxique (Chunking)
 nltk.download('words')  #Analyse syntaxique (Chunking)
+#Chunker evaluation at https://www.nltk.org/book/ch07.html
+
 
 #Tensorflow
 import tensorflow as tf
@@ -83,6 +85,12 @@ def chunking(tagged_words):
     entities = nltk.chunk.ne_chunk(tagged_words)
     return entities
 
+def syntactic_structure(tagged_words):
+    grammar = "NP: {<DT>?<JJ>*<NN>}"
+    cp = nltk.RegexpParser(grammar)
+    for tree in cp.parse(tagged_words):
+        print(tree)
+    cp.parse(tagged_words).draw()
 
 def tfidf_vectorizer(df):
     try: 
