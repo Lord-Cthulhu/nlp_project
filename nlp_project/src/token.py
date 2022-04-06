@@ -10,8 +10,10 @@ from sklearn import metrics
 import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-nltk.download('stopwords')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords') # Remove Stopwords
+nltk.download('averaged_perceptron_tagger') #Analyse Morphologique (PoS)
+nltk.download('maxent_ne_chunker') #Analyse syntaxique (Chunking)
+nltk.download('words')  #Analyse syntaxique (Chunking)
 
 #Tensorflow
 import tensorflow as tf
@@ -75,6 +77,11 @@ def pre_pos_tag(text):
     words = word_tokenize(text)
     tagged_words = nltk.pos_tag(words)
     return tagged_words
+
+
+def chunking(tagged_words): 
+    entities = nltk.chunk.ne_chunk(tagged_words)
+    return entities
 
 
 def tfidf_vectorizer(df):
