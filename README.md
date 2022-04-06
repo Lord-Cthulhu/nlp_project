@@ -11,9 +11,9 @@ python3 -m pip install --upgrade pip
 
 # Project Structure
 ```
-reader/
+nlp_project/
 │
-├── reader/
+├── nlp_project/
 │   ├── config.txt
 │   ├── classifier.py
 │   ├── __init__.py
