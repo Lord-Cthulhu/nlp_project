@@ -69,10 +69,10 @@ csv_name = "prediction.csv"
 csv_path = '/csv/'
 
 f = csv.writer(open(csv_name, 'w', newline='',encoding='utf-8'))
-f.writerow(['Keyword','satifaction'])
+f.writerow(['Keyword','category'])
 
 #Training Set
-df = pd.read_csv('satifaction.tsv', sep='\t')
+df = pd.read_csv('category.tsv', sep='\t')
 df.head()
 df.isnull().sum()
 
@@ -84,7 +84,7 @@ learn_df= pd.read_csv('input.tsv', sep=',')
 learning_df = learn_df.values.tolist()
 
 x = training_df['keyword']
-y = training_df['satifaction']
+y = training_df['category']
 
 p_predictions,p_confusionmatrix,p_classificationreport,p_accuracyscore, p_learning_predictions= run_poly_svc(learning_df, x, y)
 
