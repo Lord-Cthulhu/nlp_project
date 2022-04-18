@@ -1,0 +1,498 @@
+#Data
+import numpy as np
+import pandas as pd
+
+#Spacy 
+import spacy
+from spacy import displacy
+from spacy.tokens import Span 
+
+#NLTK - Elmo, Word2vec, etc.
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
+from yaml import scan
+nltk.download('words')
+from nltk import stem
+#from pysbd.utils import PySBDFactory
+import re
+
+
+#SVM model
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
+from sklearn import metrics
+
+#Tensorflow
+#import tensorflow as tf
+#import tensorflow_hub as hub
+
+from pathlib import Path
+
+import time
+#import torch
+import functools
+from functools import cache
+
+from tqdm import tqdm
+
+
+# def run():
+#     torch.multiprocessing.freeze_support()
+#     print('loop')
+    
+# if __name__ == '__main__':
+#     run()
+
+def excel_to_df(filepath):
+    '''
+    [Extraction des données excel en df]
+    [Spécifier:]
+    [filepath = Localisation du fichier "data.csv"]
+    '''
+    try: 
+        try:
+            df = pd.read_csv(filepath)
+            print('csv passed')
+            return df
+        except Exception as e:
+            pass
+        try:
+            df = pd.read_excel(filepath)
+            print('xlsx passed')
+            return df
+        except Exception as e:
+            pass    
+    except Exception as e:
+        print('excel_to_df failed')
+        print(f'error: {e}'.format(e))
+        pass
+
+@cache
+class QuatitativeNLP_FR: 
+    '''
+    [Token: ]
+    [Stemming: ]
+    [PoS Tagging: ]
+    [ ]
+    '''
+
+    nlp = spacy.load("fr_core_news_md")
+    
+    def __init__(self, df):
+        self.df = df
+        self.nlp = nlp
+                
+    def remove_spec_char(df):
+        df = df.lower()
+        #https://www.programcreek.com/python/?CodeExample=remove+accents
+        df = re.sub(u"[àáâãäå]", 'a', df)
+        df = re.sub(u"[èéêë]", 'e', df)
+        df = re.sub(u"[ìíîï]", 'i', df)
+        df = re.sub(u"[òóôõö]", 'o', df)
+        df = re.sub(u"[ùúûü]", 'u', df)
+        df = re.sub(u"[ýÿ]", 'y', df)
+        df = re.sub(u"[ß]", 'ss', df)
+        df = re.sub(u"[ñ]", 'n', df)
+        ####
+        
+        df = re.sub(r'[^a-zA-Z0-9\s]', ' ', df)
+        df = re.sub(' +', ' ',df)
+        print(df)
+        document = nlp(df)
+        
+        
+        spec_char = ['!','@','#','$', '%','?','&','*','(',')','_', '-', '=','+','{','}','[',']','|','<','>',"\n", "'", ".", ':','  ', '//', '...', '..','....','.....','/-', ';','    ', '.......','........', '«', '»', ':-)', '))' ]
+        clean = []
+        for i in document:
+            
+            if i.text not in spec_char:
+                clean.append(i.text)
+                
+        phrase = ' '.join(word for word in clean)
+        phrase = re.sub(r'[^a-zA-Z0-9\s]', ' ', phrase)
+        print(phrase)
+        return phrase
+    
+    def tokenize(df):
+        try:
+            document = nlp(df)
+            phrase = []
+            for i in document:
+                phrase.append(i.text) 
+            return phrase
+        except Exception as e:
+            print('Tokenize Error')
+            print(e)
+            pass
+    
+    def chunking(df):
+        text='test'
+        return text
+    
+    def remove_stopwords(df):
+        try:
+            df = df.lower()
+            document = nlp(df)
+            stpwrds = set(stopwords.words('french'))
+            clean = []
+            clean_phrase = [] 
+            stopword = []
+            for i in document:
+                if i.text in stpwrds:
+                    stopword.append(i.text)
+                else:
+                    clean.append(i.text)  
+                    clean_phrase.append(i.text)  
+            #print(stopword) 
+            
+            phrase = ' '.join(word for word in clean)
+                 
+            return phrase, stopword, clean
+        except Exception as e:
+            print('Stopwords Error')
+            print(e)
+            pass
+    
+    def stemming(df):
+        try:
+            stemmer = SnowballStemmer(language='french')
+            #stemmer = stem.re('s$|es$|era$|erez$|ions$')
+            document = nlp(df)
+            stem = []
+            for i in document:
+                stem.append(stemmer.stem(i.text)) 
+                
+            phrase = ' '.join(word for word in stem)
+            return phrase
+        except Exception as e:
+            print('Stemming Error')
+            print(e)
+            pass
+    
+    def lemmatisation(df):
+        try:
+            document = nlp(df)
+            lemma = []
+            for i in document:
+                lemma.append((i.lemma_))
+            phrase = ' '.join(word for word in lemma)
+            return phrase
+        except Exception as e:
+            print('Lemmatisation Error')
+            print(e)
+            pass    
+    
+    def pos_tagging(df):
+        try:
+            document = nlp(df)
+            phrase = []
+            for i in document:
+                phrase.append((i.text,i.pos_)) 
+            return phrase
+        except Exception as e:
+            print('PoS Error')
+            print(e)
+            pass
+    
+    def entities(df):
+        try:
+            document = nlp(df)
+            phrase = []
+            for i in document.ents:
+                phrase.append((i.text,i.label_)) 
+            return phrase
+        except Exception as e:
+            print('entities Error')
+            print(e)
+            pass
+        
+    def morphology(df):
+        try:
+            document = nlp(df)
+            phrase = []
+            for i in document:
+                 phrase.append((i.text, i.morph)) 
+            return phrase    
+        except Exception as e:
+            print('morphology Error')
+            print(e)
+            pass
+        
+    def sentence_boundary(df):
+        try:
+            document = nlp(df)
+            phrase = []
+            for i in document.sents:
+                 phrase.append(i.sent) 
+            return phrase    
+        except Exception as e:
+            print('morphology Error')
+            print(e)
+            pass
+
+
+path = 'data2.xlsx'
+df = excel_to_df(path)
+print(df)
+df = df.drop_duplicates(subset=['Dispatch No.'], keep=False)
+#df = df.drop_duplicates(subset=['Details'], keep=False)
+print(df)
+
+
+import re 
+
+def ngrams(df, n):
+    try:
+        #df = re.sub(r'[^a-zA-Z0-9\s]', ' ', df)
+        words = [word for word in df.split(" ") if word != ""]
+        ngrams = zip(*[words[i:] for i in range(n)])
+        return [" ".join(ngram) for ngram in ngrams]
+    except Exception as e:
+        print('ngrams Error')
+        print(e)
+        pass
+
+
+
+
+df["no_special"] = pd.NaT
+df["stopwords"] = pd.NaT
+df["no_stopwords"] = pd.NaT
+df["lemmatisation"] = pd.NaT
+df["stemming"] = pd.NaT
+df["pos_tagging"] = pd.NaT
+df["entities"] = pd.NaT
+
+bow=[]
+bow2 = []
+no_special = []
+stpwrds = []
+no_stpwrds = []
+lemma = []
+stemm = []
+pos_tagg = []
+entities = []
+morpho=[]
+sent_bound = []
+bi_grams = []
+tri_grams = []
+grams_lem = []
+bi_grams_lem = []
+tri_grams_lem = []
+x=0
+nlp = spacy.load("fr_core_news_md")
+for i in df['Details']:
+    print((x/9657)*100)
+    yyy = QuatitativeNLP_FR.tokenize(i)
+    bow.extend(yyy)
+    
+    a = QuatitativeNLP_FR.remove_spec_char(i)
+    
+    no_special.append(a)
+    b, stopword, clean = QuatitativeNLP_FR.remove_stopwords(a)
+    no_stpwrds.append(b)
+    bow2.extend(clean)
+    
+    bigrams = ngrams(b, 2)
+    bi_grams.extend(bigrams)
+    
+    trigrams = ngrams(b, 3)
+    tri_grams.extend(trigrams)
+
+    
+
+    c = QuatitativeNLP_FR.lemmatisation(b)
+    lemma.append(c)
+    print('lemmatisation')
+    print(c)
+    
+    d = QuatitativeNLP_FR.stemming(b)
+    stemm.append(d)
+    print('stemming')
+    print(d)
+    
+    grams_lem = ngrams(d, 1)
+    grams_lem.extend(grams_lem)
+    
+    
+    bigrams_lem = ngrams(d, 2)
+    bi_grams_lem.extend(bigrams_lem)
+    
+    trigrams_lem = ngrams(d, 3)
+    tri_grams_lem.extend(trigrams_lem)
+    
+    
+    e = QuatitativeNLP_FR.pos_tagging(d)
+    #ee= dict((y, x) for x, y in e)
+    #print(ee)
+    #pos_tagg.append(ee)
+    f = QuatitativeNLP_FR.entities(d)
+    entities.append(f)
+    m = QuatitativeNLP_FR.morphology(d)
+    morpho.append(m)
+    s = QuatitativeNLP_FR.sentence_boundary(a)
+    sent_bound.append(s)
+    
+    #per = f.vocab.strings[u'PER']
+    #print(per)
+    #displacy.render(nlp(i), style="ent", jupyter=False)
+    #output_path = Path(f"images/dependency_plot{x}.jpg".format(x=x))
+    #output_path.open("w", encoding="utf-8").write(jpg)
+    x=x+1
+    #displacy.serve(nlp(i), style="dep")
+    # print(a)
+    # print(b)
+    # print(c)
+    # print(d)
+    # print(e)
+    # print(f)
+
+df['no_special'] = pd.DataFrame(no_special)
+df["stopwords"] = pd.DataFrame(no_special)  
+df["no_stopwords"] = pd.DataFrame(no_stpwrds)  
+df["lemmatisation"] = pd.DataFrame(lemma)  
+df["stemming"] = pd.DataFrame(stemm)
+#df["morpho"] = pd.DataFrame(morpho)
+df2 = pd.DataFrame(morpho)
+df3 = pd.DataFrame(pos_tagg)
+df4 = pd.DataFrame(entities)
+df5 = pd.DataFrame(sent_bound)
+
+
+def remove_stopwords(bow):
+    words = bow
+    #input_text = input_text.lower()
+    list_nsw = [word for word in words if word not in stopwords.words('french')]
+    return list_nsw
+
+#bow2 = remove_stopwords(bow2)
+
+def c_unique_words(list_nsw):
+    words = [word.replace('"', '') for word in list_nsw]
+    words = [word.replace(',', '') for word in list_nsw]
+    unique = []
+    for word in words:
+        if word not in unique:
+            unique.append(word)    
+    return len(unique)
+
+print(c_unique_words(bow2))
+
+def unique_words(list_nsw):
+    words = [word.replace('"', '') for word in list_nsw]
+    words = [word.replace(',', '') for word in list_nsw]
+    unique = []
+    for word in words:
+        if word not in unique:
+            unique.append(word)       
+    return unique
+
+print(unique_words(bow2))
+
+def count_word_occurences(list_nsw):
+    words = [word.replace('"', '') for word in list_nsw]
+    words = [word.replace(',', '') for word in list_nsw]
+    unique = []
+    for word in words:
+        if word not in unique:
+            unique.append(word)
+    word_occ = []
+    for word in unique:
+        word_count = list_nsw.count(word)
+        word_occ.append(word_count)
+    return word_occ
+
+
+print(count_word_occurences(bow2))
+print(count_word_occurences(bi_grams))
+print(count_word_occurences(tri_grams))
+
+def text_df(uword, cword):
+    d = {'Word':uword,'Count':cword}
+    df = pd.DataFrame(d, columns=['Word','Count'])
+    return df
+
+df6 = text_df(unique_words(bow2),count_word_occurences(bow2))
+df7 = text_df(unique_words(bi_grams),count_word_occurences(bi_grams))
+df8 = text_df(unique_words(tri_grams),count_word_occurences(tri_grams))
+
+
+df61 = text_df(unique_words(grams_lem),count_word_occurences(grams_lem))
+df71 = text_df(unique_words(bi_grams_lem),count_word_occurences(bi_grams_lem))
+df81 = text_df(unique_words(tri_grams_lem),count_word_occurences(tri_grams_lem))
+
+print('bow')
+print(bow2)
+print(len(bow2))
+#u_bow = 
+
+print(sent_bound)
+
+
+print('morpho')
+print(df2)
+df2["stemming"] = pd.DataFrame(stemm)
+#df = pd.merge(df, df2, how='outer', on='stemming')
+print(df)
+print('pos_tagg')
+df3["stemming"] = pd.DataFrame(stemm)
+#df = pd.merge(df, df3, how='outer', on='stemming')
+#print(df3)
+print('entities')
+df4["stemming"] = pd.DataFrame(stemm)
+#df = pd.merge(df, df4, how='outer', on='stemming')
+print(df4)
+df5["stemming"] = pd.DataFrame(stemm)
+#df = pd.merge(df, df5, how='outer', on='stemming')
+print(df5)
+
+#print(list(pos_tagg))
+#print(entities)
+
+#displacy.serve(df, style="dep")
+
+#df["pos_tagging"] = pd.DataFrame(pos_tagg)
+#df["entities"] = pd.DataFrame(entities)   
+#df.to_json('data.json')
+df.to_excel('data_out1.xlsx')
+df2.to_excel('data_out__21.xlsx')
+df3.to_excel('data_out__31.xlsx')
+df4.to_excel('data_out__41.xlsx')
+df6.to_excel('TF31.xlsx')
+df7.to_excel('TFbi1.xlsx')
+df8.to_excel('TFtri1.xlsx')
+
+
+df61.to_excel('grams1.xlsx')
+df71.to_excel('bigrams1.xlsx')
+df81.to_excel('trigrams1.xlsx')
+
+
+print(df)
+
+# '''
+#     TAG_MAP = {
+#         'X':{'pos':"X"},
+#         'NOUN':{'pos':"NOUN"},
+#         'DET':{'pos':"DET"},
+#         'ADV':{'pos':"ADV"},
+#         'AUX':{'pos':"AUX"},
+#         'PRON':{'pos':"PRON"},
+#         'SCONJ':{'pos':"SCONJ"},
+#         'CONJ':{'pos':"CONJ"},
+#         'VERB':{'pos':"VERB"},
+#         'PROPN':{'pos':"PROPN"},
+#         'PUNCT':{'pos':"PUNCT"},
+#         'INTJ':{'pos':"INTJ"},
+#         'ADJ':{'pos':"ADJ"},
+#         'ADP':{'pos':"ADP"},
+#         'NUM':{'pos':"NUM"},
+#         'SYM':{'pos':"SYM"},
+#         'PART':{'pos':"PART"}
+#     }
+# '''
+
