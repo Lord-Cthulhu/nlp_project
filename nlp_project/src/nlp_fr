@@ -474,25 +474,5 @@ df81.to_excel('trigrams1.xlsx')
 
 print(df)
 
-# '''
-#     TAG_MAP = {
-#         'X':{'pos':"X"},
-#         'NOUN':{'pos':"NOUN"},
-#         'DET':{'pos':"DET"},
-#         'ADV':{'pos':"ADV"},
-#         'AUX':{'pos':"AUX"},
-#         'PRON':{'pos':"PRON"},
-#         'SCONJ':{'pos':"SCONJ"},
-#         'CONJ':{'pos':"CONJ"},
-#         'VERB':{'pos':"VERB"},
-#         'PROPN':{'pos':"PROPN"},
-#         'PUNCT':{'pos':"PUNCT"},
-#         'INTJ':{'pos':"INTJ"},
-#         'ADJ':{'pos':"ADJ"},
-#         'ADP':{'pos':"ADP"},
-#         'NUM':{'pos':"NUM"},
-#         'SYM':{'pos':"SYM"},
-#         'PART':{'pos':"PART"}
-#     }
-# '''
+https://spacy.io/usage/linguistic-features
 
