@@ -474,5 +474,5 @@ df81.to_excel('trigrams1.xlsx')
 
 print(df)
 
-https://spacy.io/usage/linguistic-features
+#https://spacy.io/usage/linguistic-features
 
