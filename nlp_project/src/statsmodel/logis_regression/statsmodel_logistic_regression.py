@@ -25,7 +25,7 @@ from scipy.stats.distributions import chi2
 from statsmodels.discrete.discrete_model import BinaryResultsWrapper
 from sklearn.feature_selection import RFE
 
-
+###https://stackoverflow.com/questions/69162676/statsmodels-metric-for-comparing-logistic-regression-models
 def likelihood_ratio(ll0, ll1):
     return -2 * (ll0-ll1)
 
@@ -39,7 +39,7 @@ def lrtest(fitted_model0: BinaryResultsWrapper,
     p = chi2.sf(chi2_stat, df1-df0)
 
     return (chi2_stat, p)
-
+###
 
 def transformation_pipeline(learning_df, x, y,rstate):
     #Data Split
